@@ -9,6 +9,207 @@
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
+		        /* 全局字體設定 */
+        body {
+            font-family: 'LXGW Marker Gothic', sans-serif;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            overflow-x: hidden; /* 防止水平滾動條 */
+            background-color: #00000A; /* 極深的背景色，與粒子融合 */
+            color: #E0F2FE; /* 淺藍色文字，更具科技感 */
+        }
+        /* 粒子動畫 Canvas 固定在背景 */
+        #particleCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            opacity: 0.2; /* 增加透明度，讓粒子更明顯 */
+        }
+        /* 角色卡片出現動畫 */
+        @keyframes fadeInScale {
+            from { opacity: 0; transform: translateY(50px) scale(0.95); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        .animate-fade-in-scale {
+            animation: fadeInScale 0.8s ease-out forwards;
+        }
+        /* 隱藏滾動條但允許滾動 */
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none;  /* IE and Edge */
+            scrollbar-width: none;  /* Firefox */
+        }
+
+        /* 菜單按鈕的發光效果 */
+        #sidebarToggle {
+            box-shadow: 0 0 10px rgba(59, 130, 246, 0.6), 0 0 20px rgba(59, 130, 246, 0.3);
+            left: 0.5rem; /* 調整按鈕位置，避免遮擋 */
+        }
+        #sidebarToggle:hover {
+            box-shadow: 0 0 15px rgba(59, 130, 246, 0.8), 0 0 30px rgba(59, 130, 246, 0.5);
+        }
+
+        /* 側邊欄的虛擬介面風格 */
+        #characterListPanel {
+            background-color: rgba(10, 20, 30, 0.2); /* 極度透明的背景 */
+            backdrop-filter: blur(30px); /* 更強的模糊效果 */
+            /* 無實體邊框，僅靠光暈 */
+            box-shadow: 0 0 20px rgba(59, 130, 246, 0.3), /* 柔和光暈 */
+                        0 0 40px rgba(59, 130, 246, 0.15); /* 更廣泛的光暈 */
+            transition: transform 0.4s ease-in-out;
+        }
+
+        /* 可收合區塊的樣式 */
+        .collapsible-header {
+            background-image: linear-gradient(to right, rgba(30,58,138,0.4), rgba(88,28,135,0.4)); /* 更透明的漸變 */
+            border: 1px solid transparent; /* 無硬邊框 */
+            box-shadow: 0 0 8px rgba(59, 130, 246, 0.2), 0 0 15px rgba(59, 130, 246, 0.1); /* 微妙的發光 */
+            transition: all 0.3s ease-in-out;
+            color: #93C5FD; /* 藍色調文字 */
+            cursor: pointer;
+        }
+        .collapsible-header:hover {
+            background-image: linear-gradient(to right, rgba(49,140,246,0.5), rgba(129,54,204,0.5)); /* Hover時更亮 */
+            box-shadow: 0 0 12px rgba(59, 130, 246, 0.4), 0 0 25px rgba(59, 130, 246, 0.2);
+            transform: translateY(-2px) scale(1.02); /* 輕微上浮和放大 */
+            color: #E0F2FE; /* Hover時更亮文字 */
+        }
+        .collapsible-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease-in-out, padding 0.4s ease-in-out; /* 確保 padding 也有過渡 */
+            padding-top: 0;
+            padding-bottom: 0;
+        }
+        .collapsible-content.expanded {
+            max-height: 1000px; /* 足夠大的值，確保內容展開 */
+            padding-top: 0.75rem; /* pt-3 */
+            padding-bottom: 0.75rem; /* pb-3 */
+        }
+
+        /* 書名按鈕的樣式 */
+        .book-button {
+            background-image: linear-gradient(to right, rgba(30,58,138,0.2), rgba(88,28,135,0.2)); /* 極度透明的漸變 */
+            border: 1px solid transparent; /* 無硬邊框 */
+            box-shadow: 0 0 5px rgba(59, 130, 246, 0.1), 0 0 10px rgba(59, 130, 246, 0.05); /* 微妙的發光 */
+            transition: all 0.3s ease-in-out;
+            color: #93C5FD; /* 藍色調文字 */
+        }
+        .book-button:hover {
+            background-image: linear-gradient(to right, rgba(49,140,246,0.3), rgba(129,54,204,0.3)); /* Hover時更亮 */
+            box-shadow: 0 0 8px rgba(59, 130, 246, 0.3), 0 0 15px rgba(59, 130, 246, 0.15);
+            transform: translateY(-1px) scale(1.01);
+            color: #E0F2FE;
+        }
+        .book-button.active {
+            background-image: linear-gradient(to right, #60A5FA, #A78BFA); /* 啟動時的鮮明漸變 */
+            border: 1px solid #67e8f9; /* cyan-400 邊框 */
+            box-shadow: 0 0 15px rgba(103, 232, 249, 0.6), 0 0 30px rgba(103, 232, 249, 0.4); /* 更強的啟動發光 */
+            transform: scale(1.00);
+            color: #0F172A; /* 啟動時深色文字 */
+        }
+
+        /* 角色列表按鈕的樣式 */
+        .character-list-button {
+            background-color: rgba(31, 41, 55, 0.3); /* 更透明的背景 */
+            transition: all 0.2s ease-in-out;
+            color: #93C5FD; /* 藍色調文字 */
+        }
+        .character-list-button:hover {
+            background-color: rgba(55, 65, 81, 0.5); /* Hover時更亮 */
+            color: #E0F2FE;
+        }
+        .character-list-button.active {
+            background-color: #1E40AF; /* blue-800 */
+            color: #E0F2FE; /* 淺藍色文字 */
+            font-weight: 600;
+            box-shadow: 0 0 10px rgba(59, 130, 246, 0.4);
+        }
+
+        /* 全息投影浮窗效果 */
+        .holographic-projection {
+            background-color: rgba(10, 20, 30, 0.15); /* 極致透明的背景 */
+            backdrop-filter: blur(30px); /* 強烈的模糊效果 */
+            border-radius: 2rem; /* 更圓潤的邊角 */
+            position: relative; /* 用於偽元素 */
+            overflow: hidden; /* 隱藏溢出的偽元素 */
+            /* 無實體邊框，純粹靠光暈 */
+            box-shadow: 0 0 40px rgba(59, 130, 246, 0.3), /* 外層柔和光暈 */
+                        0 0 80px rgba(59, 130, 246, 0.15); /* 更廣泛的光暈 */
+            animation: holographicPulse 3s infinite alternate ease-in-out; /* 輕微脈動 */
+        }
+
+        /* 浮窗內部掃描線動畫 */
+        .holographic-projection::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border-radius: 2rem;
+            background: linear-gradient(0deg, transparent 0%, rgba(100, 200, 255, 0.08) 50%, transparent 100%);
+            background-size: 100% 200%;
+            animation: scanline 6s linear infinite;
+            pointer-events: none; /* 允許點擊穿透 */
+            z-index: -1; /* 確保在內容下方 */
+        }
+
+        @keyframes holographicPulse {
+            0% { box-shadow: 0 0 40px rgba(59, 130, 246, 0.3), 0 0 80px rgba(59, 130, 246, 0.15); }
+            100% { box-shadow: 0 0 45px rgba(59, 130, 246, 0.4), 0 0 90px rgba(59, 130, 246, 0.2); }
+        }
+
+        @keyframes scanline {
+            0% { background-position: 0% 0%; }
+            100% { background-position: 0% 100%; }
+        }
+
+        /* 圖片投影效果 */
+        .image-projection {
+            border: 2px solid rgba(96, 165, 250, 0.3); /* 更細微的藍色邊框 */
+            box-shadow: 0 0 20px rgba(96, 165, 250, 0.5), 0 0 40px rgba(96, 165, 250, 0.3); /* 較亮的藍色光暈 */
+            transition: all 0.3s ease-in-out;
+        }
+        .image-projection:hover {
+            transform: scale(1.02);
+            box-shadow: 0 0 25px rgba(96, 165, 250, 0.7), 0 0 50px rgba(96, 165, 250, 0.5);
+        }
+
+        /* 主內容區的平滑過渡 */
+        #mainContentWrapper {
+            transition: margin-left 0.4s ease-in-out;
+            /* 確保有足夠空間給側邊欄開關按鈕，即使側邊欄關閉 */
+            padding-left: 6rem; /* 增加 padding-left */
+            padding-right: 1.5rem; /* 保持右側內邊距 */
+        }
+        @media (min-width: 1024px) { /* lg 尺寸及以上 */
+            #mainContentWrapper.sidebar-open {
+                padding-left: 1.5rem; /* 當側邊欄打開時，恢復正常 padding */
+            }
+        }
+
+
+        /* 確保側邊欄和菜單按鈕層級最高 */
+        #sidebarToggle {
+            z-index: 60;
+        }
+        #characterListPanel {
+            z-index: 50;
+        }
+        /* 初始狀態，側邊欄在手機模式下隱藏 */
+        @media (max-width: 1023px) {
+            #characterListPanel {
+                transform: translateX(-100%);
+            }
+        }
+		</style>
 </head>
 <body class="min-h-screen flex flex-col">
     <!-- 粒子動畫背景 Canvas -->
