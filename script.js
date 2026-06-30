@@ -98,7 +98,7 @@
             }
         });
 
-        // 創建書別類別區塊 (大作品/小作品) 和其下的書名按鈕
+        // 創建書別類別區塊和其下的書名按鈕
         function createBookCategorySections() {
             bookCategorySectionsDiv.innerHTML = ''; // 清空舊內容
 
