@@ -26,17 +26,22 @@
 
     <!-- 主容器：包含左側面板和右側主顯示區 -->
     <div class="relative z-10 flex flex-1 w-full">
+		
         <!-- 左側面板：角色列表與書別選擇 -->
         <aside id="characterListPanel" class="fixed top-0 left-0 h-full w-64 xl:w-72 bg-opacity-70 backdrop-blur-xl p-6 shadow-2xl overflow-y-auto hide-scrollbar">
+			
             <!-- 側邊欄關閉按鈕 -->
             <button id="closeSidebarButton" class="absolute top-6 right-6 p-2 rounded-full bg-red-700 hover:bg-red-600 text-white transition duration-300 transform hover:scale-110 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-75 hidden">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+               
+				<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                 </svg>
-            </button>
+            
+			</button>
 
             <h2 class="text-3xl font-bold text-blue-400 mb-6 border-b border-blue-700 pb-3">書別選擇</h2>
-            <!-- 書別選擇區塊 -->
+           
+			<!-- 書別選擇區塊 -->
             <div id="bookCategorySections" class="space-y-4">
                 <!-- 書別類別（大作品/小作品）將由 JavaScript 注入 -->
             </div>
@@ -44,7 +49,8 @@
             <h2 class="text-3xl font-bold text-blue-400 mt-8 mb-6 border-b border-blue-700 pb-3 collapsible-header" id="characterSelectionHeader">
                 角色選擇 <svg class="w-5 h-5 ml-2 transform transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
             </h2>
-            <div id="characterButtonsContainer" class="collapsible-content space-y-3">
+           
+			<div id="characterButtonsContainer" class="collapsible-content space-y-3">
                 <!-- 角色按鈕將由 JavaScript 注入 -->
                 <p class="text-gray-400 text-sm">請先選擇書別</p>
             </div>
@@ -52,10 +58,12 @@
 
         <!-- 右側主顯示區 -->
         <main id="mainContentWrapper" class="flex-grow p-6 sm:p-10 lg:p-16 flex flex-col items-center w-full">
-            <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-600 mb-6 text-center drop-shadow-lg">
+          
+			<h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-600 mb-6 text-center drop-shadow-lg">
                 小說角色分析展示
             </h1>
-            <p class="text-xl sm:text-2xl lg:text-3xl text-blue-200 mb-12 text-center max-w-3xl">
+            
+			<p class="text-xl sm:text-2xl lg:text-3xl text-blue-200 mb-12 text-center max-w-3xl">
                 探索虛擬數據流中的角色深度。
             </p>
 
@@ -71,6 +79,7 @@
     </div>
 
     <script src="characters_data.js"></script>
+    <script src="script.js"></script>
 
 </body>
 </html>
